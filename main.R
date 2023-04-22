@@ -47,9 +47,9 @@ defensive_team <- team_stats[order(-team_stats$Def3rdPres),]
 
 # The top offensive and defensive teams
 cat("Top most offensive teams:\n")
-print(head(offensive_team, 1))
+print(head(offensive_team, 10))
 cat("\nTop most defensive teams:\n")
-print(head(defensive_team, 1))
+print(head(defensive_team, 10))
 
 
 
@@ -63,8 +63,8 @@ sorted_data <- squad_data[order(squad_data$W, decreasing = TRUE),]
 sorted_data_losses <- squad_data[order(squad_data$L, decreasing = TRUE),]
 
 # Extract top team with most wins and losses
-top_wins <- head(sorted_data, 1)
-top_losses <- head(sorted_data_losses, 1)
+top_wins <- head(sorted_data, 5)
+top_losses <- head(sorted_data_losses, 5)
 
 # Print the results
 cat("Team with the most wins:\n")
@@ -110,7 +110,7 @@ scaled_data <- scale(squad_data[, c("W", "D", "L", "SaveRt", "Att3rdPres", "Def3
 
 # Perform k-means clustering
 set.seed(123)
-k <- 19 # Number of clusters
+k <- 3 # Number of clusters
 kmeans_model <- kmeans(scaled_data, k)
 
 # Add cluster labels to data
@@ -122,7 +122,9 @@ ggplot(squad_data, aes(x = Def3rdPres, y = Att3rdPres, color = cluster)) +
   geom_point(size = 3) +
   scale_color_brewer(type = "qual", palette = "Set1") +
   labs(title = "Clustering of Teams based on Performance",
-       x = "Defensive Pressure", y = "Offensive Pressure")
+       x = "Defensive Pressure", y = "Offensive Pressure")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
 
 
 
@@ -181,6 +183,7 @@ cor(squad_data[,c("W", "D", "L", "SaveRt", "Def3rdPres", "Att3rdPres")])
 
 ggplot(squad_data, aes(x = Att3rdPres, y = Def3rdPres)) +
   geom_point(aes(colour = SaveRt)) +
+  geom_text(aes(label = Squad), size = 2, hjust = 0, vjust = 0)
   labs(title = "Attacking vs Defensive Pressure", x = "Attacking Pressure", y = "Defensive Pressure")
 
 squad_data %>% 
