@@ -204,3 +204,123 @@ hist(squad_data$Def3rdPres, col = squad_data_$squad_label, main = "Defense Press
 hist(squad_data$Att3rdPres, col = squad_data_$squad_label, main = "Attacking Pressure")
 
 legend("left", legend = levels(as.factor(squad_data$Squad)), col = 1:length(levels(as.factor(squad_data$Squad))), pch = 15, bty = "n", x.intersp = 1, y.intersp = 1, inset = 0.7)
+                         # attacking attributes in soccer can include metrics such as goals scored, 
+#shots on target, shot accuracy, key passes, dribbles completed, and chances created
+
+#Goals scored = Gf in table, TotShTg : Shots on Target in squadshooting
+#G/SoT : Goals per shot on target, PK : penalty kick made
+
+
+# Defensive attributes, can include metrics such as tackles, 
+# interceptions, clearances, blocks, duels won, and aerials won. 
+
+
+# data Cleaning. 
+squad_shooting <- read.csv("~/R Forcast/Projects/england_premier_league_squad_shooting_22.csv", sep = ";")
+View(squad_shooting)
+att <- select(table, c(1,2,4,5,6,7))
+atta <- select(squad_shooting, c(1,6,11,14))
+defensive <- select(defensive_actions, c(1,5,6,7,15,17))
+
+#merging the datasets.
+Offensive <- merge(att, atta, by="Squad")
+View(Offensive)
+View(defensive)
+
+# Scale the numerical columns
+scaled_ <- scale(Offensive[, c("W", "D", "L", "GF", "TotShTg", "G.SoT", "PK")])
+
+# Perform k-means clustering
+set.seed(123)
+k <- 5 # Number of clusters
+kmeans_model <- kmeans(scaled_, k)
+
+# Add cluster labels to data
+Offensive$cluster <- as.factor(kmeans_model$cluster)
+
+# Visualize the Goals scored and shots on target clusters using ggplot2 
+
+ggplot(Offensive, aes(x = GF, y = TotShTg, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clustering of Teams based on Goal Scored and Shots on Target.",
+       x = "Goal Scored", y = "Shots on Target")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+# Goals shot on target in relation to goals scored.
+
+ggplot(Offensive, aes(x = GF, y = G.SoT, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clustering of Teams based on Goal Scored and Shots Accuracy.",
+       x = "Goal Scored", y = "Goals per Shots on Target")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+# Goals Shot on target in relation  to wins
+ggplot(Offensive, aes(x = W, y = G.SoT, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clustering of Teams based on Wins and Shots on Target.",
+       x = "Goal Scored", y = "Wins")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+
+# Penalty kick in relationship to goals scored
+
+
+ggplot(Offensive, aes(x = PK, y = GF, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clustering of Teams based on Penalty kicks and  Goal Scored.",
+       x = "Penalty Kicks", y = "Goals scored")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+#Defense tactics
+defensive
+
+# Scale the numerical columns
+scale_ <- scale(defensive[, c("Def3rdTck", "Mid3rdTck", "Att3rdTck", "Def3rdPres", "Att3rdPres")])
+
+# Perform k-means clustering
+set.seed(123)
+k <- 5 # Number of clusters
+kmeans_model <- kmeans(scale_, k)
+
+# Add cluster labels to data
+defensive$cluster <- as.factor(kmeans_model$cluster)
+
+# Visualize the Tackles in Defensive and attacking 3rd. 
+
+ggplot(defensive, aes(x = Def3rdTck, y = Att3rdTck, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clusters in Tackles in Defensive 3rd and Attacking 3rd.",
+       x = "Tackles in Defensive 3rd", y = "Tackles in Attacking 3rd")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+# Visualize the Tackles in Attacking Pressure and attacking 3rd. 
+
+ggplot(defensive, aes(x = Att3rdPres, y = Att3rdTck, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clusters in Pressures in Attacking  and Tackles in Attacking .",
+       x = "Pressures in Defensive 3rd", y = "Tackles in Attacking 3rd")+
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+
+# Visualize the Defensive Pressure and Mid Tackles. 
+
+ggplot(defensive, aes(x = Def3rdPres, y = Mid3rdTck, color = cluster)) + 
+  geom_point(size = 3) +
+  scale_color_brewer(type = "qual", palette = "Set1") +
+  labs(title = "Clusters in Defensive Pressure and Mid Tackles.",
+       x = "Pressures in Defensive 3rd", y = "Tackles in Attacking 3rd") +
+  geom_text(aes(label = Squad), size = 3, hjust = 0, vjust = 0)
+
+
+
