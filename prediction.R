@@ -6,22 +6,23 @@ loaded_model <- readRDS("att_def_model.rds")
 # Create a new data frame with the features of the team you want to predict
 new_data <- data.frame(
   Squad="Real Madrid",
+  GF = 61,
   Def3rdPres = 1500,
   Att3rdPres = 2000,
-  SaveRt = 70,
+  SaveRt = 69.5,
   TotSh = 580,
   TotShTg =185,
   TotTouc =23735,
   DefPenTouc=2447,
-  Def3rdTouc=239,
-  Mid3rdTouc=18298,
-  Att3rdTouc= 2429,
-  AttPenTouc =6918, 
-  KP =7646,
-  SCAT =1092,
-  GCAT =100,
-  Def3rdPres=930,
-  Att3rdPres=1223
+  Def3rdTouc=7398,
+  Mid3rdTouc=11003,
+  Att3rdTouc= 6845,
+  AttPenTouc =1093, 
+  KP =425,
+  SCAT =921,
+  GCAT =88,
+  Def3rdPres=1398,
+  Att3rdPres=1464
 )
 
 # Use the predict function to get the prediction
